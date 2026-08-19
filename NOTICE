@@ -1,0 +1,45 @@
+aemeath (爱弥斯 · 星炬回响 · Aemeath · Starbeacon Echo)
+========================================================
+
+Third-party derivative notice (CC BY-NC-SA 4.0 attribution chain)
+
+This skin's visual design is derived from the character "Aemeath" (爱弥斯)
+from the game "Wuthering Waves" (鸣潮). Per the ShareAlike and Attribution
+requirements of CC BY-NC-SA 4.0, all upstream rights holders are credited:
+
+1. 原作 (original work): Kuro Games (库洛游戏) —— 《鸣潮》(Wuthering
+   Waves) 游戏作品及爱弥斯 (Aemeath) 角色形象的权利人。
+   The original game and character design.
+
+2. 皮肤工程结构 (skin engineering structure): 本皮肤直接仿照
+   dsh-client-ui-skin-denia（作者 Ewnscat）构建——包括模块加载工厂模式、
+   双形态舞台架构、调色板面板、DOM 装饰逻辑、dispose 撤回机制。
+   The skin scaffolding and layout/animation engineering patterns are
+   derived from dsh-client-ui-skin-denia by Ewnscat, which in turn drew on
+   maid-atelier by Small-tailqwq and dsh-web-ui by zhu1090093659.
+
+3. 玻璃卡片层级 (glass card layering): [id=root] 的 backdrop-filter
+   半透明卡片 + scrim 遮罩模式参考 dsh-client-ui-skin-miku
+   （作者 @linxin6666）。
+   The root glass card + scrim backdrop pattern references
+   dsh-client-ui-skin-miku by @linxin6666.
+
+4. 素材 (assets): 角色立绘 / 背景 / Q 版吉祥物素材由用户自行提供并
+   通过调色板面板上传，或以 base64 数据 URI 形式内嵌于皮肤脚本。
+   本皮肤默认仅含程序化生成的 SVG/CSS 视觉（数据粒子、星炬角标、数据流边框）。
+   Background images, character illustrations, and chibi mascot assets are
+   provided by the user and uploaded via the palette panel, or embedded as
+   base64 data URIs. This skin ships with programmatic SVG/CSS visuals only.
+
+5. 皮肤制作 (this skin): Aemeath (@dsh-external/dsh-client-ui-skin-aemeath)
+   —— 基于 DeepSeek Harness WebGUI 的皮肤覆盖层实现，含 CSS 配色、
+   SVG 装饰与 DOM 装饰逻辑。
+   The skin overlay implementation for the DeepSeek Harness web GUI.
+
+Usage terms: CC BY-NC-SA 4.0 —— 署名 (attribution) 必须保留以上完整
+创作链；非商业性使用 (non-commercial only)；衍生作品必须以相同方式
+共享 (share-alike)。
+
+Character "Aemeath" (爱弥斯) and "Wuthering Waves" (鸣潮) are trademarks of
+Kuro Games. This skin is a fan work and is not affiliated with or endorsed
+by Kuro Games.

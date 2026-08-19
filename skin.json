@@ -1,0 +1,30 @@
+{
+  "id": "aemeath",
+  "name": "爱弥斯 · 星炬回响",
+  "nameEn": "Aemeath · Starbeacon Echo",
+  "author": "Aemeath",
+  "tagline": "粉发电子幽灵 · 星炬学院拉海洛 · 隧者之剑 · 数据流与机兵轮廓",
+  "description": "《鸣潮》爱弥斯主题皮肤：以粉发幽灵少女、青蓝数据流、星炬暖金与隧者剑影构成电子幽灵调色板，用数据流、星炬、声痕菱形、机兵轮廓作为装饰母题，为加载、思考和工具运行状态预留动画钩子。亮色模式映射星炬学院白昼的校园氛围，暗色模式映射电子幽灵夜的虚空数据流。",
+  "tags": [
+    "anime",
+    "wuthering-waves",
+    "aemeath",
+    "ghost",
+    "data",
+    "pink",
+    "cyan",
+    "starbeacon"
+  ],
+  "accent": "#F2689E",
+  "bodyAttr": "data-dsh-aemeath",
+  "package": "@dsh-external/dsh-client-ui-skin-aemeath",
+  "wiring": {
+    "id": "ui-skin-aemeath",
+    "bundleWired": false
+  },
+  "preview": {
+    "light": "preview/light.png",
+    "dark": "preview/dark.png"
+  },
+  "order": 9
+}
