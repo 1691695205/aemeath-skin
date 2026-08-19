@@ -2,6 +2,8 @@
 
 DeepSeek Harness Web GUI 的鸣潮爱弥斯主题皮肤。
 
+> **参考项目**：本皮肤参考 [Ewnscat-ya/dsh-client-ui-skin-denia](https://github.com/Ewnscat-ya/dsh-client-ui-skin-denia) 的工程结构开发（模块加载工厂模式、双形态舞台架构、调色板面板、DOM 装饰逻辑），致谢详见文末。
+
 ## 效果预览
 
 > 预览图取自用户壁纸素材（`C:\Users\chen\Pictures\壁纸\plugin`），亮/暗各一张。
