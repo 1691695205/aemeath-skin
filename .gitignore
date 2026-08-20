@@ -1,7 +1,6 @@
-﻿# 备份与中间产物（不推）
+﻿# 备份与中间产物
 *.bak*
-preview/*.bak-prev
-_cut2.py
+_cut*.py
 # 系统文件
 .DS_Store
 Thumbs.db

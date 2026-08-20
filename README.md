@@ -1,115 +1,46 @@
-# dsh-client-ui-skin-aemeath · 爱弥斯 · 星炬回响
+# dsh-client-ui-skin-aemeath · 爱弥斯 · 星炬回响（v2）
 
-DeepSeek Harness Web GUI 的鸣潮爱弥斯主题皮肤。
+DeepSeek Harness Web GUI 的鸣潮爱弥斯主题皮肤——**v2 纯资产形态**。
 
-> **参考项目**：本皮肤参考 [Ewnscat-ya/dsh-client-ui-skin-denia](https://github.com/Ewnscat-ya/dsh-client-ui-skin-denia) 的工程结构开发（模块加载工厂模式、双形态舞台架构、调色板面板、DOM 装饰逻辑），致谢详见文末。
+## 这是什么
 
-## 效果预览
+按皮肤中心 v2 契约（issue #506）组织：皮肤是**纯资产目录**（`skin.json` manifest v2 + `skin.css` + `hooks.mjs` + `assets/` + `preview/`），由皮肤中心（`@linxin666/dsh-client-ui-skin-center` 0.2.x）加载渲染。切换皮肤**免重启、免刷新**——不写 `cordis.patch.yml`、不进 boot graph。
 
-> 预览图取自用户壁纸素材（`C:\Users\chen\Pictures\壁纸\plugin`），亮/暗各一张。
+## 文件
 
-| 星炬白昼（亮色） | 幽灵之夜（暗色） |
+| 文件 | 说明 |
 |---|---|
-| ![星炬白昼](preview/light.png) | ![幽灵之夜](preview/dark.png) |
-
-## 特性
-
-- **双形态切换**：星炬白昼（亮色）/ 幽灵之夜（暗色），含数据脉冲形态切换动画
-- **程序化视觉**：无官方素材也能成形——数据粒子场、星炬角标、声痕 favicon、数据流边框均由 SVG + CSS 生成
-- **立绘舞台**：预留左右立绘 + Q 版吉祥物位，上传素材即可启用（见调色板）
-- **玻璃卡片层级**：root 半透明 + backdrop-filter 模糊
-- **数据粒子场**：前景大光点 + 背景微尘双层上浮
-- **数据流边框**：青蓝流线 + 粉芯节点，跟随侧栏宽度
-- **渐变文字**：工作区/会话标题粉青渐变
-- **装饰条 + 四角星**：侧边栏粉金数据流装饰
-- **深色/浅色按钮文字替换**：星炬白昼 / 幽灵之夜
-- **新会话欢迎界面注入**：爱弥斯标题 + 副标题 + 台词
-- **侧栏收起/展开自适应布局**
-
-## 版权所有人
-
-| 版权所有人 | 版权所有内容 |
-|---|---|
-| Kuro Games（库洛游戏） | 「鸣潮」游戏作品及爱弥斯（Aemeath）角色形象原作 |
-| Aemeath / 本皮肤作者 | 皮肤覆盖层实现（CSS 配色、SVG 装饰、DOM 装饰逻辑） |
-
-\*本皮肤为同人创作，与 Kuro Games 无关联。角色立绘 / 背景素材需用户自行提供。
+| `skin.json` | manifest v2：`contributes.stylesheet` / `backgroundMedia`（亮暗背景 + scrim）/ `facets.client`（hooks 入口） |
+| `skin.css` | L1 token 重映射（`--dsw-alias-*`）+ 装饰样式；CSS 安全管线自动 scope 到 `html[data-dsh-skin="aemeath"]` |
+| `hooks.mjs` | 立绘舞台（亮/暗主题切换）、粒子场、数据流链边框、四角星、学院徽章、favicon、标题、欢迎界面、**🎨 调色板**（localStorage 持久化）；所有装饰层 `pointer-events:none` |
+| `assets/` | 立绘 4 张（亮/暗左右）、背景 2 张（亮=4K壁纸、暗=太空壁纸）、SVG 装饰、emblem |
+| `preview/` | 亮/暗预览图 |
 
 ## 安装
 
-### 懒人版
+皮肤中心 0.2.x 的皮肤来源有两个：
 
-对你的 dsh 说：
+1. **内置（hooks 生效，推荐）**：把整个目录复制到
+   `node_modules/@linxin666/dsh-client-ui-skin-center/skins/aemeath/`
+   ——目录名与 `skin.json` 的 `id` 一致即被发现，`origin=builtin`，`hooks.mjs` 可执行，全部视觉效果生效。
 
-```
-安装一下这个皮肤包：<皮肤包路径或 git 仓库地址>
-```
+2. **用户目录（hooks 被拒）**：复制到 `$DSH_HOME/skins/aemeath/`（`~/.dsh/skins/aemeath/`）
+   ——皮肤可加载（CSS + 背景），但 v2 契约中**用户皮肤 hooks 因未过官方评审被 403 拒绝**，立绘等 JS 装饰不生效。要完整效果请用内置方式。
 
-### 手动安装
+> 升级皮肤中心包会覆盖内置 `skins/`，升级后需重新复制本目录。
 
-```sh
-# 方式一：作为独立 bundle 安装到目标 profile
-cd <harness>
-dsh plugin --profile desktop add <本皮肤包路径>
+## 机制
 
-# 方式二：手动复制
-# 将本包复制到
-#   <harness-home>/.dsh/profiles/desktop/node_modules/@dsh-external/dsh-client-ui-skin-aemeath/
-# 然后在 <harness-home>/.dsh/profiles/desktop/cordis.patch.yml 的 dsh-skin managed 段添加：
-#   - id: ui-skin-aemeath
-#     disabled: false
-```
+- **背景**：`backgroundMedia` 声明式（manifest）+ hooks 同步接管（`theme.subscribe` 切换亮/暗 palace 图与 scrim）
+- **立绘/装饰**：`hooks.mjs` 创建，主题切换亮/暗立绘；全部装饰层内联 `pointer-events:none`，不拦截任何交互
+- **调色板**：右下角 🎨 —— 左右立绘显隐、立绘高度（30–80vh）、水平偏移（-50~50px）、粒子场/数据流边框开关；localStorage key `aemeath-palette-v2`
+- **主题**：亮色=星炬白昼（4K 壁纸），暗色=幽灵之夜（太空壁纸）
 
-重启 DSH 后在设置 → 皮肤中选择「爱弥斯 · 星炬回响」（或在皮肤中心 Try on / Apply）。
+## 参考项目
 
-## 调色板
+- v1 工程结构参考 [Ewnscat-ya/dsh-client-ui-skin-denia](https://github.com/Ewnscat-ya/dsh-client-ui-skin-denia)（模块加载工厂模式、双形态舞台架构、调色板面板、DOM 装饰逻辑）
+- v2 形态遵循 [zhu1090093659/dsh-web-ui](https://github.com/zhu1090093659/dsh-web-ui) 的皮肤中心 v2 契约（`contracts/skin-manifest-v2.schema.json`、`contracts/hooks-api.d.ts`）
 
-皮肤加载后，界面右下角会出现一个可折叠的调色板面板。所有设置自动保存在浏览器 localStorage，刷新不丢失。
+## 版权
 
-### 亮色 / 暗色（分形态独立控制）
-
-| 控件 | 说明 |
-|---|---|
-| 背景图 | 上传自定义背景 / 清除恢复默认 |
-| 左立绘 | 显示/隐藏左侧角色立绘 |
-| 右立绘 | 显示/隐藏右侧角色立绘 |
-| Q版吉祥物 | 显示/隐藏 Q 版表情包 |
-
-### 通用（亮暗两形态同时生效）
-
-| 控件 | 范围 | 默认值 |
-|---|---|---|
-| 对话宽度 | 500–1000px | 780px |
-| 立绘高度 | 30–80vh | 55vh |
-| 立绘水平偏移 | −50–50px | 0px |
-| 表情大小 | 60–240px | 120px |
-| 表情竖直偏移 | −200–200px | 0px |
-| 背景透明度 | 20–100% | 100% |
-| 消息文本框 | 开/关 | 关 |
-| 文本框透明度 | 20–100% | 68% |
-| 数据粒子场 | 开/关 | 开 |
-| 粒子数量 | 5–40 | 20 |
-| 粒子速度 | 30–200% | 100% |
-| 数据流边框 | 开/关 | 开 |
-| 装饰条 | 开/关 | 开 |
-
-点击「♻ 恢复默认设置」可一键还原所有选项。
-
-## 兼容性
-
-- DSH Web：0.1.0-rc.6、0.1.0-rc.7（dsh-web-frontend）
-- 平台：Web
-- 最近验证日期：2026-08-18
-
-## 致谢
-
-| 来源 | 说明 |
-|---|---|
-| [dsh-client-ui-skin-denia](https://github.com/Ewnscat-ya/dsh-client-ui-skin-denia)（Ewnscat） | 皮肤工程结构：模块加载工厂模式、双形态舞台架构、调色板面板、DOM 装饰逻辑（本项目直接仿其结构） |
-| [dsh-web-ui](https://github.com/zhu1090093659/dsh-web-ui)（zhu1090093659） | 皮肤工程脚手架与皮肤中心机制 |
-
-## 许可
-
-本仓库以 **CC BY-NC-SA 4.0**（署名-非商业性使用-相同方式共享）发布，禁止商业性使用。署名链见 `NOTICE`。
-
-Character "Aemeath" (爱弥斯) and "Wuthering Waves" (鸣潮) are trademarks of Kuro Games. This skin is a fan work and is not affiliated with or endorsed by Kuro Games.
+「鸣潮」游戏作品及爱弥斯（Aemeath）角色形象版权归 **Kuro Games（库洛游戏）**所有；「星炬学院 / 拉海洛 / 隧者之剑 / 声痕」为相关设定。本皮肤为同人创作，与 Kuro Games 无关联。
