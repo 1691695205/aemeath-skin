@@ -19,6 +19,7 @@ DeepSeek Harness Web GUI 的鸣潮爱弥斯主题皮肤——**v2 纯资产形�
 - **程序化装饰**：数据粒子场（前后双层）、数据流链边框、四角星火花、学院徽章、favicon、标题栏 wordmark
 - **欢迎界面**：新会话 hero 台词（「……你要走了吗？我会在这里等你回来。」）
 - **🎨 调色板**：右下角面板，立绘显隐 / 高度 / 水平偏移、粒子场与数据流边框开关，localStorage 持久化
+- **🌈 回复文字配色**：助手消息正文与代码/链接/强调等分元素上色（亮暗两套配色），见下方「回复文字配色」一节
 - **交互安全**：全部装饰层 `pointer-events:none`，不拦截任何点击与输入
 
 ## 文件结构
@@ -27,7 +28,7 @@ DeepSeek Harness Web GUI 的鸣潮爱弥斯主题皮肤——**v2 纯资产形�
 aemeath/
 ├── skin.json      # manifest v2：id / contributes.stylesheet / backgroundMedia / facets.client
 ├── skin.css       # L1 token 重映射（--dsw-alias-*）+ 装饰样式；安全管线自动 scope 到 html[data-dsh-skin="aemeath"]
-├── hooks.mjs      # 立绘舞台 / 粒子场 / 链边框 / 四角星 / 徽章 / favicon / 标题 / 欢迎界面 / 调色板
+├── hooks.mjs      # 立绘舞台 / 粒子场 / 链边框 / 四角星 / 徽章 / favicon / 标题 / 欢迎界面 / 调色板 / 消息标记器
 ├── assets/
 │   ├── char-left.png / char-right.png          # 亮色左右立绘
 │   ├── char-left-dark.png / char-right-dark.png # 暗色左右立绘
@@ -69,6 +70,30 @@ aemeath/
 | 立绘水平偏移 | −50–50px | 0px |
 | 粒子场 | 开 / 关 | 开 |
 | 数据流边框 | 开 / 关 | 开 |
+
+## 回复文字配色（🌈）
+
+皮肤会对**助手回复正文**做分元素上色，亮/暗各一套配色，覆盖正文、标题、链接、强调、代码、引用、列表、表格与分隔线：
+
+| 元素 | 亮色（星炬白昼） | 暗色（幽灵之夜） |
+|---|---|---|
+| 正文 | `#7A4E8A` 粉紫 | `#D0A8E0` 粉紫 |
+| 标题 h1–h3 | 粉→玫→金渐变 | 粉→青渐变 |
+| 链接 | `#B84E78` 玫红 | `#F0A0C0` 亮玫红 |
+| 强调 strong/em/b | `#B84E78` 玫红加粗 | `#F2A8C6` 亮玫红加粗 |
+| 行内代码 | `#4C7FA0` 青蓝 + 浅青底 | `#8FD3E8` 亮青 + 青底 |
+| 代码块 pre | 青蓝底 + 暖金左条 | 青底 + 暖金左条 |
+| 引用 blockquote | 次级紫 + 金边 | 亮紫 + 金边 |
+| 列表标记 | 玫红 | 亮玫红 |
+| 表格 | 玫红边框 / 表头 | 青边框 / 青表头 |
+| 分隔线 | 暖金 | 暖金 |
+
+**机制说明**：
+
+- **锚点**：`hooks.mjs` 内置「消息标记器」，轮询为每条助手消息容器（`data-chat-flow-kind="assistant"` / `"assistant-step"`，找不到时回退 `[data-streaming]` / 官方 markdown 类）打上 `data-aemeath-msg` 属性
+- **样式**：`skin.css` 的「⑭ MESSAGE TEXT PALETTE」段以 `[data-aemeath-msg]` 为作用域写分元素配色；正文同时重映射官方 token `--dsw-alias-label-primary` 并 `!important` 兜底，保证压过官方默认色
+- **为什么不用** `data-dsh-part="message-body"`：该语义属性由皮肤中心的 semantic adapter 打在 `[data-streaming]` 上，而 `data-streaming` **只在消息流式生成时存在**——已完成的历史消息没有它，会导致配色落空；消息标记器专为此绕开
+- **调色**：改 `skin.css` 中「⑭」段的色值即可，无需动 hooks；改完把文件同步到皮肤中心内置目录（`<profile>/node_modules/@linxin666/dsh-client-ui-skin-center/skins/aemeath/`）并刷新页面生效
 
 ## 机制
 
