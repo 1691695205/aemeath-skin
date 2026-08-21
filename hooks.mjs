@@ -282,7 +282,7 @@ export default function defineSkinHooks() {
       try { palette = JSON.parse(localStorage.getItem(PALETTE_KEY) || '{}') } catch (e) {}
       const paletteDefaults = {
         left: true, right: true, charHeight: 55, offsetX: 0,
-        bubbles: true, chain: true,
+        bubbles: true, chain: true, msgColor: true,
       }
       if (!palette || typeof palette !== 'object') palette = {}
       for (const k in paletteDefaults) if (!(k in palette)) palette[k] = paletteDefaults[k]
@@ -297,6 +297,8 @@ export default function defineSkinHooks() {
         bubbleFg.style.display = palette.bubbles ? '' : 'none'
         bubbleBg.style.display = palette.bubbles ? '' : 'none'
         chain.style.display = palette.chain ? '' : 'none'
+        if (palette.msgColor) body.setAttribute('data-aemeath-msg-color', 'on')
+        else body.removeAttribute('data-aemeath-msg-color')
       }
       applyPalette()
 
@@ -373,7 +375,13 @@ export default function defineSkinHooks() {
       t2.className = 'pp-group-title'
       t2.textContent = '氛围'
       g2.append(t2, mkToggle('bubbles', '粒子场'), mkToggle('chain', '数据流边框'))
-      panelBody.append(g1, g2)
+      const g3 = document.createElement('div')
+      g3.className = 'pp-group'
+      const t3 = document.createElement('div')
+      t3.className = 'pp-group-title'
+      t3.textContent = '文字'
+      g3.append(t3, mkToggle('msgColor', '回复文字配色'))
+      panelBody.append(g1, g2, g3)
       palettePanel.append(header, panelBody)
       const togglePanel = () => {
         palettePanel.dataset.paletteCollapsed = palettePanel.dataset.paletteCollapsed === 'true' ? 'false' : 'true'
@@ -384,7 +392,16 @@ export default function defineSkinHooks() {
       onCleanup(() => { paletteToggle.remove(); palettePanel.remove() })
 
       // ---- message marker: tag assistant markdown containers (aemeath) ----
+      const setMsgMarks = (on) => {
+        document.querySelectorAll('[data-aemeath-msg]').forEach((el) => {
+          if (!on) el.removeAttribute('data-aemeath-msg')
+        })
+      }
       const markMessages = () => {
+        if (body.getAttribute('data-aemeath-msg-color') !== 'on') {
+          setMsgMarks(false)
+          return 0
+        }
         let tagged = 0
         document.querySelectorAll('[data-chat-flow-kind]').forEach((el) => {
           if (el.getAttribute('data-chat-flow-kind') === 'assistant' || el.getAttribute('data-chat-flow-kind') === 'assistant-step') {
@@ -403,7 +420,7 @@ export default function defineSkinHooks() {
       }
       const markLoop = setInterval(() => { markMessages() }, 1200)
       markMessages()
-      onCleanup(() => { clearInterval(markLoop) })
+      onCleanup(() => { clearInterval(markLoop); setMsgMarks(false) })
     },
   }
 }
