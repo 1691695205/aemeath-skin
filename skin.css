@@ -249,3 +249,9 @@ body[data-ds-dark-theme][data-aemeath-msg-color='on'] [data-aemeath-msg] li::mar
 body[data-ds-dark-theme][data-aemeath-msg-color='on'] [data-aemeath-msg] th,body[data-ds-dark-theme][data-aemeath-msg-color='on'] [data-aemeath-msg] td{border-color:rgba(143,211,232,0.25)}
 body[data-ds-dark-theme][data-aemeath-msg-color='on'] [data-aemeath-msg] th{color:#8FD3E8;background:rgba(143,211,232,0.10)}
 body[data-ds-dark-theme][data-aemeath-msg-color='on'] [data-aemeath-msg] hr{border-color:rgba(232,192,96,0.4)}
+
+/* === MESSAGE FRAME — toggleable bubble frame around AI responses === */
+body[data-aemeath-msg-frame='on'] [data-aemeath-msg]{box-shadow:inset 0 0 0 1px rgba(242,104,158,0.22),0 1px 4px rgba(45,27,78,0.06);border-radius:12px;background-color:rgba(253,246,249,var(--aemeath-msg-opacity,0.85));padding:8px 12px;box-sizing:border-box}
+body[data-ds-dark-theme][data-aemeath-msg-frame='on'] [data-aemeath-msg]{box-shadow:inset 0 0 0 1px rgba(86,212,230,0.22),0 0 12px rgba(242,104,158,0.08);border-radius:12px;background-color:rgba(12,18,38,var(--aemeath-msg-opacity,0.85))}
+body[data-aemeath-msg-frame='on'] [data-aemeath-msg] *{position:relative;z-index:1}
+body[data-aemeath-msg-frame='on'] [data-aemeath-msg]{transition:none!important}
