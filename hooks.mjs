@@ -382,6 +382,28 @@ export default function defineSkinHooks() {
       paletteToggle.addEventListener('click', togglePanel)
       body.append(paletteToggle, palettePanel)
       onCleanup(() => { paletteToggle.remove(); palettePanel.remove() })
+
+      // ---- message marker: tag assistant markdown containers (aemeath) ----
+      const markMessages = () => {
+        let tagged = 0
+        document.querySelectorAll('[data-chat-flow-kind]').forEach((el) => {
+          if (el.getAttribute('data-chat-flow-kind') === 'assistant' || el.getAttribute('data-chat-flow-kind') === 'assistant-step') {
+            el.setAttribute('data-aemeath-msg', '')
+            tagged++
+          }
+        })
+        // Fallback: any container whose subtree holds markdown-shaped assistant output.
+        if (tagged === 0) {
+          document.querySelectorAll('[data-streaming], [class*="Sxvs8a_root"]').forEach((el) => {
+            el.setAttribute('data-aemeath-msg', '')
+            tagged++
+          })
+        }
+        return tagged
+      }
+      const markLoop = setInterval(() => { markMessages() }, 1200)
+      markMessages()
+      onCleanup(() => { clearInterval(markLoop) })
     },
   }
 }
