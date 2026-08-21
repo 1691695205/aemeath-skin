@@ -115,15 +115,20 @@ export default function defineSkinHooks() {
         el.style.pointerEvents = 'none'
       }
 
+      // ---- background opacity (palette-controlled scrim strength) ----
+      let bgOpacityVal = 100
       // ---- background art (theme-switched; overrides the declarative media) ----
       const BODY_BG_PROPS = ['background-image', 'background-position', 'background-size', 'background-attachment', 'background-repeat']
       const prevBg = {}
       for (const p of BODY_BG_PROPS) prevBg[p] = body.style.getPropertyValue(p)
       const applyBg = (theme) => {
         const dark = theme === 'dark'
+        const op = bgOpacityVal / 100
+        const base = dark ? [0.42, 0.5, 0.56] : [0.08, 0.12, 0.16]
+        const f = (i) => (base[i] * (1.5 - op)).toFixed(3)
         const scrim = dark
-          ? 'linear-gradient(rgba(8,14,30,0.42) 0%,rgba(10,18,38,0.5) 55%,rgba(12,22,46,0.56) 100%)'
-          : 'linear-gradient(rgba(250,240,246,0.08) 0%,rgba(244,228,240,0.12) 55%,rgba(238,216,236,0.16) 100%)'
+          ? 'linear-gradient(rgba(8,14,30,' + f(0) + ') 0%,rgba(10,18,38,' + f(1) + ') 55%,rgba(12,22,46,' + f(2) + ') 100%)'
+          : 'linear-gradient(rgba(250,240,246,' + f(0) + ') 0%,rgba(244,228,240,' + f(1) + ') 55%,rgba(238,216,236,' + f(2) + ') 100%)'
         body.style.backgroundImage = scrim + ', url(' + asset(dark ? 'palace-dark.jpg' : 'palace-light.jpg') + ')'
         body.style.backgroundPosition = 'center'
         body.style.backgroundSize = 'cover'
@@ -283,10 +288,40 @@ export default function defineSkinHooks() {
       const paletteDefaults = {
         left: true, right: true, charHeight: 55, offsetX: 0,
         bubbles: true, chain: true, msgColor: true,
+        corners: true, emblem: true, contentWidth: 600, bgOpacity: 100,
+        bubbleCount: 20, bubbleSpeed: 100,
+        msgFrame: false, msgOpacity: 68,
       }
       if (!palette || typeof palette !== 'object') palette = {}
       for (const k in paletteDefaults) if (!(k in palette)) palette[k] = paletteDefaults[k]
       const savePalette = () => { try { localStorage.setItem(PALETTE_KEY, JSON.stringify(palette)) } catch (e) {} }
+      const applyBubbles = () => {
+        const target = palette.bubbleCount != null ? palette.bubbleCount : 20
+        if (bubbleFg.children.length !== target) {
+          while (bubbleFg.firstChild) bubbleFg.removeChild(bubbleFg.firstChild)
+          for (let i = 0; i < target; i++) {
+            const b = document.createElement('span')
+            b.dataset.aemeathBubble = ''
+            const size = 6 + Math.random() * 18
+            b.style.width = size + 'px'
+            b.style.height = size + 'px'
+            b.style.left = (Math.random() * 100) + '%'
+            const dur = 12 + Math.random() * 20
+            b.dataset.baseDur = String(dur)
+            b.style.animationDuration = dur + 's'
+            b.style.animationDelay = '-' + (Math.random() * 20) + 's'
+            bubbleFg.append(b)
+          }
+        }
+        const speedMult = 100 / (palette.bubbleSpeed || 100)
+        for (const f of [bubbleFg, bubbleBg]) {
+          for (const el of f.children) {
+            const base = parseFloat(el.dataset.baseDur || el.style.animationDuration || '20')
+            if (!el.dataset.baseDur) el.dataset.baseDur = String(base)
+            el.style.animationDuration = base * speedMult + 's'
+          }
+        }
+      }
       const applyPalette = () => {
         left.style.display = palette.left ? '' : 'none'
         right.style.display = palette.right ? '' : 'none'
@@ -297,8 +332,17 @@ export default function defineSkinHooks() {
         bubbleFg.style.display = palette.bubbles ? '' : 'none'
         bubbleBg.style.display = palette.bubbles ? '' : 'none'
         chain.style.display = palette.chain ? '' : 'none'
+        corners.style.display = palette.corners ? '' : 'none'
+        emblem.style.display = palette.emblem ? '' : 'none'
+        body.style.setProperty('--aemeath-content-width', palette.contentWidth + 'px')
         if (palette.msgColor) body.setAttribute('data-aemeath-msg-color', 'on')
         else body.removeAttribute('data-aemeath-msg-color')
+        if (palette.msgFrame) body.setAttribute('data-aemeath-msg-frame', 'on')
+        else body.removeAttribute('data-aemeath-msg-frame')
+        body.style.setProperty('--aemeath-msg-opacity', (palette.msgOpacity != null ? palette.msgOpacity : 68) / 100)
+        bgOpacityVal = palette.bgOpacity != null ? palette.bgOpacity : 100
+        applyBubbles()
+        applyBg(currentTheme())
       }
       applyPalette()
 
@@ -374,14 +418,26 @@ export default function defineSkinHooks() {
       const t2 = document.createElement('div')
       t2.className = 'pp-group-title'
       t2.textContent = '氛围'
-      g2.append(t2, mkToggle('bubbles', '粒子场'), mkToggle('chain', '数据流边框'))
+      g2.append(t2, mkToggle('bubbles', '粒子场'), mkToggle('chain', '数据流边框'),
+        mkToggle('corners', '星芒'), mkToggle('emblem', '学院徽章'),
+        mkSlider('bubbleCount', '泡泡数量', 5, 40, ''),
+        mkSlider('bubbleSpeed', '泡泡速度', 30, 200, '%'))
       const g3 = document.createElement('div')
       g3.className = 'pp-group'
       const t3 = document.createElement('div')
       t3.className = 'pp-group-title'
       t3.textContent = '文字'
-      g3.append(t3, mkToggle('msgColor', '回复文字配色'))
-      panelBody.append(g1, g2, g3)
+      g3.append(t3, mkToggle('msgColor', '回复文字配色'),
+        mkToggle('msgFrame', '消息文本框'),
+        mkSlider('msgOpacity', '文本框透明度', 20, 100, '%'))
+      const g4 = document.createElement('div')
+      g4.className = 'pp-group'
+      const t4 = document.createElement('div')
+      t4.className = 'pp-group-title'
+      t4.textContent = '版式'
+      g4.append(t4, mkSlider('contentWidth', '对话宽度', 500, 1000, 'px'),
+        mkSlider('bgOpacity', '背景透明度', 20, 100, '%'))
+      panelBody.append(g1, g2, g3, g4)
       palettePanel.append(header, panelBody)
       const togglePanel = () => {
         palettePanel.dataset.paletteCollapsed = palettePanel.dataset.paletteCollapsed === 'true' ? 'false' : 'true'
@@ -398,7 +454,8 @@ export default function defineSkinHooks() {
         })
       }
       const markMessages = () => {
-        if (body.getAttribute('data-aemeath-msg-color') !== 'on') {
+        const msgActive = body.getAttribute('data-aemeath-msg-color') === 'on' || body.getAttribute('data-aemeath-msg-frame') === 'on'
+        if (!msgActive) {
           setMsgMarks(false)
           return 0
         }
