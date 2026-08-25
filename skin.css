@@ -77,10 +77,7 @@ body[data-ds-dark-theme] [id=root]{background:linear-gradient(rgba(10,14,32,0.55
 /* === 热熔光柱 — dark mode bottom warm pillar === */
 body[data-ds-dark-theme]::before{content:'';position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:42vw;max-width:520px;height:100vh;background:radial-gradient(ellipse 100% 80% at 50% 100%,rgba(255,140,66,0.13) 0%,rgba(242,104,158,0.06) 32%,transparent 72%);pointer-events:none;z-index:0}
 
-/* === BACKGROUND ART LAYER === */
- [data-skin-chrome='bg-art']{position:fixed;inset:0;pointer-events:none;z-index:0;background-size:cover;background-position:center;opacity:0.12;transition:opacity 0.8s ease}
-body[data-ds-dark-theme] [data-skin-chrome='bg-art']{opacity:0.28}
-
+/* === CHARACTER STAGE — fixed, tracks sidebar width === */
 /* === CHARACTER STAGE — fixed, tracks sidebar width === */
  [data-skin-chrome='character-stage']{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
  [data-aemeath-character]{will-change:opacity,left,max-height;position:absolute;bottom:0;object-fit:contain;transition:filter 0.8s ease,left 0.3s ease,opacity 0.3s ease,max-height 0.3s ease,max-width 0.3s ease}
@@ -105,7 +102,7 @@ body[data-ds-dark-theme][data-aemeath-session-phase='hero'][data-aemeath-sidebar
  [data-skin-chrome='chain-border']{position:fixed;top:var(--aemeath-titlebar-height,0px);bottom:0;left:var(--aemeath-sidebar-width,280px);width:6px;background-repeat:repeat-y;background-position:center;opacity:0.5;pointer-events:none;z-index:2;transition:left 0.3s ease,opacity 0.3s ease}
 [data-aemeath-sidebar-size='rail'] [data-skin-chrome='chain-border']{left:0;opacity:0}
 
-/* === SIDEBAR FOOTER (swag as :before, keeps settings visible) === */
+/* === SIDEBAR FOOTER — keeps settings visible === */
  [data-aemeath-sidebar-footer]{box-sizing:border-box;flex:0 0 auto;min-height:56px;padding:12px 18px;box-shadow:none;background:0 0;border:0;position:relative}
  [data-aemeath-sidebar-footer]:before{content:none}
  [data-aemeath-sidebar-footer] [data-slot='sidebar.settings']>button, [data-aemeath-sidebar-footer] [data-slot='sidebar.settings']>[role='button']{z-index:1;color:var(--aemeath-gold);border:1px solid rgba(242,104,158,0.2);background:var(--aemeath-glass);border-radius:8px;width:100%;min-height:44px;box-shadow:none;position:relative;transition:color 0.15s,filter 0.15s,transform 0.15s}
@@ -121,16 +118,6 @@ body[data-ds-dark-theme][data-aemeath-session-phase='hero'][data-aemeath-sidebar
  [data-skin-chrome='sidebar-corners'] [data-skin-corner='bottom-right']{bottom:0;right:0;background-image:url(
 );transform:scale(-1,-1)}
  [data-skin-chrome='sidebar-corners'] [data-skin-corner='bottom-left']{display:none}
- [data-skin-chrome='sidebar-mascot']{position:absolute;bottom:calc(48vh + 24px + var(--aemeath-chibi-offset-y,0px));left:calc(var(--aemeath-sidebar-width,280px) + 8px + 8vw);transform:translateX(-50%);width:var(--aemeath-chibi-size,120px);height:var(--aemeath-chibi-size,120px);border-radius:8px;opacity:0.9;transition:opacity 0.3s,bottom 0.3s ease,left 0.3s ease,width 0.3s ease,height 0.3s ease;pointer-events:none;z-index:2;object-fit:cover}
-[data-aemeath-sidebar-size='rail'] [data-skin-chrome='sidebar-mascot']{left:calc(8px + 12vw);bottom:calc(58vh + 24px + var(--aemeath-chibi-offset-y,0px));width:calc(var(--aemeath-chibi-size,120px) * 1.25);height:calc(var(--aemeath-chibi-size,120px) * 1.25)}
-[data-aemeath-session-phase='hero']:not([data-aemeath-sidebar-size='rail']) [data-skin-chrome='sidebar-mascot']{left:calc(var(--aemeath-sidebar-width,280px) + 8px + 9vw);bottom:calc(48vh + 24px + var(--aemeath-chibi-offset-y,0px))}
-[data-aemeath-session-phase='hero'][data-aemeath-sidebar-size='rail'] [data-skin-chrome='sidebar-mascot']{left:calc(8px + 12vw);bottom:calc(58vh + 24px + var(--aemeath-chibi-offset-y,0px));width:calc(var(--aemeath-chibi-size,120px) * 1.25);height:calc(var(--aemeath-chibi-size,120px) * 1.25)}
-[data-aemeath-sidebar-size='narrow'] [data-skin-chrome='sidebar-mascot']{opacity:0.5}
-
-/* === TOP/BOTTOM TRIM — 6px, flame endpoints === */
- [data-skin-chrome='top-trim'], [data-skin-chrome='bottom-trim']{position:fixed;left:0;right:0;height:6px;pointer-events:none;z-index:100;background:linear-gradient(90deg,transparent 0%,var(--aemeath-gold) 10%,var(--aemeath-pink) 30%,var(--aemeath-cyan) 50%,var(--aemeath-flame) 70%,var(--aemeath-gold) 90%,transparent 100%);opacity:0.6}
- [data-skin-chrome='top-trim']{top:0}
- [data-skin-chrome='bottom-trim']{bottom:0}
 
 /* === TITLEBAR BRAND === */
  [data-skin-chrome='titlebar-brand']{display:flex;align-items:center;height:100%;color:var(--dsw-alias-brand-text);opacity:0.7}
@@ -172,13 +159,6 @@ body[data-ds-dark-theme] [data-aemeath-bubble]{background:radial-gradient(circle
 body:not([data-ds-dark-theme]) [data-aemeath-bubble-bg]{background:radial-gradient(circle at 50% 50%,rgba(55,182,201,0.5) 0%,transparent 70%);box-shadow:0 0 6px rgba(55,182,201,0.35)}
 body[data-ds-dark-theme] [data-aemeath-bubble-bg]{background:radial-gradient(circle at 50% 50%,rgba(86,212,230,0.4) 0%,transparent 70%);box-shadow:0 0 6px rgba(86,212,230,0.3)}
 @keyframes aemeath-mote-rise-bg{0%{transform:translateY(0) scale(0.2);opacity:0}10%{opacity:0.45}50%{opacity:0.28}90%{opacity:0.06}100%{transform:translateY(-110vh) scale(0.8);opacity:0}}
-
-/* === FORM TRANSITION — data burst / dawn wash === */
- [data-skin-chrome='form-transition']{position:fixed;inset:0;pointer-events:none;z-index:9999;will-change:opacity}
- [data-skin-chrome='form-transition'][data-aemeath-transition='erupt']{background-color:rgba(8,14,30,0.92);background-image:radial-gradient(circle at 50% 45%,rgba(255,140,66,0.22) 0%,rgba(242,104,158,0.12) 30%,transparent 60%);animation:aemeath-data-erupt 4s ease-out forwards}
-@keyframes aemeath-data-erupt{0%{opacity:0}3%{opacity:1}25%{opacity:1}45%{opacity:0.8}65%{opacity:0.4}85%{opacity:0.12}100%{opacity:0}}
- [data-skin-chrome='form-transition'][data-aemeath-transition='awaken']{background-color:rgba(249,232,243,0.93);background-image:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(242,104,158,0.12) 0%,rgba(191,232,240,0.08) 50%,transparent 100%);animation:aemeath-dawn-awaken 5s ease-in-out forwards}
-@keyframes aemeath-dawn-awaken{0%{opacity:0}15%{opacity:1}35%{opacity:1}55%{opacity:0.8}75%{opacity:0.35}90%{opacity:0.08}100%{opacity:0}}
 
 /* === CONTENT AREA — centered, leaves margin for character art === */
  [class*='_centerCol'] [class*='_viewArea'], [class*='_centerCol'] [class*='_composerSeat']{max-width:var(--aemeath-content-width,780px)!important;margin:0 auto!important;width:100%!important}
