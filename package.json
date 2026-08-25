@@ -8,7 +8,6 @@
   "exports": {
     ".": "./lib/index.js",
     "./client": "./lib/client.js",
-    "./skin.json": "./skin.json",
     "./package.json": "./package.json"
   },
   "dsh": {
@@ -33,9 +32,7 @@
     "lib/index.js",
     "lib/client.js",
     "cordis.patch.yml",
-    "skin.json",
     "assets",
-    "preview",
     "LICENSE",
     "NOTICE",
     "README.md"
