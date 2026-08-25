@@ -1,6 +1,9 @@
-# dsh-client-ui-skin-aemeath · 爱弥斯 · 星炬回响（v2）
+# dsh-client-ui-skin-aemeath · 爱弥斯 · 星炬回响
 
-DeepSeek Harness Web GUI 的鸣潮爱弥斯主题皮肤——**v2 纯资产形态**，按皮肤中心 v2 契约（issue #506）组织：皮肤是纯资产目录（`skin.json` manifest v2 + `skin.css` + `hooks.mjs` + `assets/` + `preview/`），由皮肤中心（`@linxin666/dsh-client-ui-skin-center` 0.2.x）加载渲染。切换皮肤**免重启、免刷新**——不写 `cordis.patch.yml`、不进 boot graph。
+DeepSeek Harness Web GUI 的鸣潮爱弥斯主题皮肤，支持**双形态**：
+
+- **皮肤中心 v2 形态**（`skin.json` + `skin.css` + `hooks.mjs` 纯资产目录）：由皮肤中心（`@linxin666/dsh-client-ui-skin-center` 0.2.x）加载渲染，切换**免重启、免刷新**。
+- **独立插件形态**（cordis bundle，v1.0.0 新增）：`package.json` + `cordis.patch.yml` + `lib/`，走 DSH 官方 web 插件管线，**不依赖皮肤中心**，提供一个**设置区界面开关**整体启用/停用皮肤。此形态下 hooks 逻辑全部在 `lib/client.js` 内自包含运行，不受「用户皮肤 hooks 403」限制。
 
 ## 效果预览
 
@@ -18,7 +21,7 @@ DeepSeek Harness Web GUI 的鸣潮爱弥斯主题皮肤——**v2 纯资产形�
 - **背景插画**：亮色=4K 壁纸（粉发少女蝴蝶光效）、暗色=太空壁纸（星球纸飞机），带渐变遮罩（scrim）
 - **程序化装饰**：数据粒子场（前后双层）、数据流链边框、四角星火花、学院徽章、favicon、标题栏 wordmark
 - **欢迎界面**：新会话 hero 台词（「……你要走了吗？我会在这里等你回来。」）
-- **🎨 调色板**：右下角面板，立绘显隐 / 高度 / 水平偏移、粒子场与数据流边框开关，localStorage 持久化
+- **🎨 调色板**：右下角面板，立绘显隐 / 高度 / 水平偏移、粒子场与数据流边框开关（皮肤中心形态存 localStorage；插件形态走 DSH 设置区并持久化到 profile）
 - **🌈 回复文字配色**：助手消息正文与代码/链接/强调等分元素上色（亮暗两套配色），见下方「回复文字配色」一节
 - **交互安全**：全部装饰层 `pointer-events:none`，不拦截任何点击与输入
 
@@ -60,20 +63,43 @@ aemeath/
 
 ## 作为独立插件安装（带开关）
 
-本仓库同时可作为 **cordis bundle 插件** 安装（denia 皮肤同款形态）。此模式**不依赖皮肤中心**，走 DSH 官方 web 插件管线，因此不受「用户皮肤 hooks 403」限制——立绘、粒子场、背景、**回复文字配色全部生效**，且提供一个**界面开关**（DSH 设置 → 插件 → ui-skin-aemeath）可整体启用/停用皮肤。
+本仓库同时可作为 **cordis bundle 插件** 安装（denia 皮肤同款形态），这是 **v1.0.0 推荐的方式**。此模式**不依赖皮肤中心**，走 DSH 官方 web 插件管线，因此不受「用户皮肤 hooks 403」限制——立绘、粒子场、背景、**回复文字配色全部生效**。
 
 ### 安装
 
 ```sh
-# 从仓库目录（或打包后的 git url）
+# 本地路径（或 git url）
 dsh plugin --profile <name> add ./aemeath-skin
+# 或从 GitHub 直接安装
+dsh plugin --profile <name> add https://github.com/1691695205/aemeath-skin
 ```
 
-重启 DSH 后：
+重启 DSH 后生效。
 
-- **开关**：设置界面 → 插件 → `ui-skin-aemeath`，顶部「enabled」即总开关（关 = 皮肤完全卸载回到默认界面）
-- **调色板**：同一设置区含立绘显隐 / 高度 / 偏移 / 粒子场 / 数据流边框 / 回复文字配色等控件
-- 设置持久化到 profile 文件（`profiles/<name>/data/dsh-client-ui-skin-aemeath/settings.json`），刷新、重启、清浏览器存储都不丢
+### 界面开关与设置区
+
+皮肤设置挂在 **DSH 设置界面 → 插件 → `ui-skin-aemeath`**，全部控件即时生效、持久化到 profile 文件：
+
+| 控件 | 类型 | 范围/选项 | 默认 |
+|---|---|---|---|
+| **enabled** | 开关 | 启用 / 停用（总开关，关=整皮肤卸载回默认界面） | 开 |
+| left / right | 开关 | 左 / 右立绘显示 | 开 |
+| charHeight | 滑块 | 立绘高度 30–80vh | 55vh |
+| offsetX | 滑块 | 立绘水平偏移 −200–200px | 0px |
+| bubbles | 开关 | 粒子场 | 开 |
+| bubbleCount | 滑块 | 泡泡数量 5–40 | 20 |
+| bubbleSpeed | 滑块 | 泡泡速度 30–200% | 100% |
+| chain | 开关 | 数据流边框 | 开 |
+| corners | 开关 | 四角星芒 | 开 |
+| emblem | 开关 | 学院徽章 | 开 |
+| **msgColor** | 开关 | 回复文字配色 | 开 |
+| msgFrame | 开关 | 消息文本框 | 关 |
+| msgOpacity | 滑块 | 文本框透明度 20–100% | 68% |
+| contentWidth | 滑块 | 对话宽度 400–1200px | 600px |
+| bgOpacity | 滑块 | 背景透明度 20–100% | 100% |
+
+- **持久化**：`profiles/<name>/data/dsh-client-ui-skin-aemeath/settings.json`，刷新、重启、清浏览器存储都不丢
+- **总开关关闭** = 完整卸载：移除装饰 DOM、恢复 body 背景样式、移除注入的 CSS，回到 DSH 默认界面；设置区里再打开立即恢复
 
 ### 文件（插件形态）
 
@@ -86,11 +112,21 @@ dsh plugin --profile <name> add ./aemeath-skin
 └── lib/client.template.mjs   # client 源码模板（占位符由构建脚本填充）
 ```
 
-> 构建：改动 `assets/` 或 `skin.css` 后运行 `node scripts/build-client.mjs` 重新生成 `lib/client.js`。
+> **构建**：改动 `assets/` 或 `skin.css` 后运行 `node scripts/build-client.mjs` 重新生成 `lib/client.js`（素材以 base64 内联，构建产物体积约 13MB）。
+
+### 两种形态差异
+
+| | 皮肤中心 v2 形态 | 独立插件形态（v1.0.0） |
+|---|---|---|
+| 依赖 | 需装 `dsh-client-ui-skin-center` 0.2.x | 无需皮肤中心 |
+| hooks（立绘/粒子/配色等 JS 装饰） | 内置目录生效；**用户目录被 403 拒绝** | 全部生效（内联在 client.js） |
+| 开关 | 皮肤中心面板「总开关」 | **DSH 设置区 `ui-skin-aemeath` 开关** |
+| 设置持久化 | 内置：localStorage | **profile 文件**（跨刷新/重启/清存储） |
+| 升级覆盖风险 | 内置目录随皮肤中心包升级被覆盖 | 无（作为独立插件依赖） |
 
 ## 调色板（🎨）
 
-右下角 🎨 按钮打开面板（皮肤内建，非皮肤中心面板），设置存 `localStorage`（key `aemeath-palette-v2`）：
+> 皮肤中心 v2 形态自带右下角 🎨 按钮面板（皮肤内建，非皮肤中心面板），设置存 `localStorage`（key `aemeath-palette-v2`）。**独立插件形态不使用此浮动面板**——所有控件已并入 DSH 设置区 `ui-skin-aemeath`（见「作为独立插件安装」），持久化到 profile 文件。
 
 | 控件 | 范围 | 默认 |
 |---|---|---|
@@ -133,8 +169,35 @@ dsh plugin --profile <name> add ./aemeath-skin
 - **背景**：manifest `backgroundMedia` 声明式（资产 + scrim），hooks 同步接管（主题订阅切换亮/暗 palace 图），优先级 Wallpaper Engine 壁纸 > 用户手动背景 > 皮肤背景
 - **主题**：亮=星炬白昼（4K 壁纸）、暗=幽灵之夜（太空壁纸），`body[data-ds-dark-theme]` 驱动
 
+## 更新记录
+
+### v1.0.0 — 2026-08-25 · 独立插件形态（带界面开关）
+
+**新增**
+- 插件化改造（denia 同款 cordis bundle）：新增 `package.json`、`cordis.patch.yml`、`lib/index.js`、`lib/client.js`、`scripts/build-client.mjs`
+- **DSH 设置区开关**：`ui-skin-aemeath` 设置区（`enabled` 总开关 + 15 项调色板控件），关=皮肤完整卸载回默认界面
+- **profile 持久化**：设置存 `profiles/<name>/data/dsh-client-ui-skin-aemeath/settings.json`，跨刷新/重启/清浏览器存储不丢
+- 宿主端设置 API：`GET/PUT /api/dsh-aemeath/settings`（loopback 鉴权、字段校验、原子写）
+- hooks 逻辑整体迁移进 `lib/client.js` 自包含运行，绕开皮肤中心「用户皮肤 hooks 403」限制
+
+**技术要点**
+- client bundle 按 DSH `__ModuleLoader__.load({ id, factory })` 契约注册（`exports.apply = apply`）
+- 不依赖 `dsh.client.inject` 注入链：主题检测自实现（`body[data-ds-dark-theme]` + MutationObserver），素材以 base64 data URI 内联
+- 已知踩坑：访问未注入的 `ctx.onCleanup` 会抛 `cannot get property ... without inject`，故 client 完全自包含、不触碰 ctx 属性
+
+### 皮肤中心 v2 形态（历史）
+
+- 皮肤中心 0.2.x 加载渲染；切换免重启、免刷新
+- 已知限制：升级皮肤中心包会覆盖内置 `skins/`；用户目录形态下 hooks 不执行
+
 ## 兼容性
 
+**插件形态（v1.0.0，推荐）**
+- DSH Web：`0.1.0-rc.6 ~ 0.1.1-rc.2`（`dsh.client.version` 声明区间）
+- 依赖：`schemastery`（dependencies）、`@deepseek-ai/dsh-settings`（peer，由 DSH 共享层提供）、`@deepseek-ai/cordis`（peer）
+- 不依赖皮肤中心
+
+**皮肤中心 v2 形态**
 - 皮肤中心：`@linxin666/dsh-client-ui-skin-center` **0.2.x**（v2 契约，issue #506）
 - hooks 契约：`x-org.linxin666.skin-center/v1alpha1`
 - 已知限制：升级皮肤中心包会覆盖内置 `skins/`；用户目录形态下 hooks 不执行
