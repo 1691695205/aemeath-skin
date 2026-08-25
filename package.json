@@ -1,0 +1,43 @@
+{
+  "name": "@dsh-external/dsh-client-ui-skin-aemeath",
+  "description": "Aemeath (爱弥斯 · 星炬回响) themed skin with character stage, data particle fields and message text palette for the dsh web GUI",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./skin.json": "./skin.json",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [],
+      "platform": "web",
+      "version": "0.1.0-rc.6 - 0.1.1-rc.2"
+    }
+  },
+  "license": "CC-BY-NC-SA-4.0",
+  "dependencies": {
+    "schemastery": "^3.18.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-settings": "^0.1.1-rc.2"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "cordis.patch.yml",
+    "skin.json",
+    "assets",
+    "preview",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ]
+}

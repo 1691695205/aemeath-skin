@@ -1,0 +1,7 @@
+# aemeath skin bundle patch: inserts its public dsh.client entry into the web plugin roster.
+# The bundle is the official dsh plugin shape — install it with
+# `dsh plugin --profile <name> add <path-or-git-url>`.
+# The on/off switch lives in the DSH settings section "ui-skin-aemeath" (see lib/index.js).
+- insert:
+    - id: ui-skin-aemeath
+      name: '@dsh-external/dsh-client-ui-skin-aemeath'

@@ -58,6 +58,36 @@ aemeath/
 
 > ⚠️ 升级皮肤中心包会覆盖内置 `skins/`，升级后需重新复制本目录。
 
+## 作为独立插件安装（带开关）
+
+本仓库同时可作为 **cordis bundle 插件** 安装（denia 皮肤同款形态）。此模式**不依赖皮肤中心**，走 DSH 官方 web 插件管线，因此不受「用户皮肤 hooks 403」限制——立绘、粒子场、背景、**回复文字配色全部生效**，且提供一个**界面开关**（DSH 设置 → 插件 → ui-skin-aemeath）可整体启用/停用皮肤。
+
+### 安装
+
+```sh
+# 从仓库目录（或打包后的 git url）
+dsh plugin --profile <name> add ./aemeath-skin
+```
+
+重启 DSH 后：
+
+- **开关**：设置界面 → 插件 → `ui-skin-aemeath`，顶部「enabled」即总开关（关 = 皮肤完全卸载回到默认界面）
+- **调色板**：同一设置区含立绘显隐 / 高度 / 偏移 / 粒子场 / 数据流边框 / 回复文字配色等控件
+- 设置持久化到 profile 文件（`profiles/<name>/data/dsh-client-ui-skin-aemeath/settings.json`），刷新、重启、清浏览器存储都不丢
+
+### 文件（插件形态）
+
+```
+├── package.json          # dsh.bundle.patch → cordis.patch.yml；dsh.client.platform: web
+├── cordis.patch.yml      # insert ui-skin-aemeath 到 web 插件名单
+├── lib/index.js          # 宿主端：/api/dsh-aemeath/settings (GET/PUT) + installSettingsSection 设置区
+├── lib/client.js         # 浏览器端：内联素材 + skin.css + 装饰管线 + 开关轮询（构建产物）
+├── scripts/build-client.mjs  # 从 client.template.mjs + assets + skin.css 生成 lib/client.js
+└── lib/client.template.mjs   # client 源码模板（占位符由构建脚本填充）
+```
+
+> 构建：改动 `assets/` 或 `skin.css` 后运行 `node scripts/build-client.mjs` 重新生成 `lib/client.js`。
+
 ## 调色板（🎨）
 
 右下角 🎨 按钮打开面板（皮肤内建，非皮肤中心面板），设置存 `localStorage`（key `aemeath-palette-v2`）：
