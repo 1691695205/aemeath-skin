@@ -35,7 +35,7 @@
 background-color:#F2EFF7;
 background-position:center top;background-size:cover;background-attachment:fixed;background-repeat:no-repeat
 }
- [id=root]{box-sizing:border-box;background:linear-gradient(rgba(248,248,248,0.84) 0%,rgba(246,242,249,0.7) 110px,rgba(244,246,252,0.6) 100%);border:1px solid rgba(232,152,176,0.12);box-shadow:0 8px 28px rgba(48,72,120,0.08),inset 0 1px rgba(255,255,255,0.6)}
+ #root{box-sizing:border-box;background:linear-gradient(rgba(248,248,248,0.84) 0%,rgba(246,242,249,0.7) 110px,rgba(244,246,252,0.6) 100%) !important;border:1px solid rgba(232,152,176,0.12);box-shadow:0 8px 28px rgba(48,72,120,0.08),inset 0 1px rgba(255,255,255,0.6)}
 
 /* === DARK MODE — 幽灵之夜 (深蓝夜空 + 青蓝辉光) === */
 body[data-ds-dark-theme]{color:#F3EAF2;
@@ -72,10 +72,13 @@ body[data-ds-dark-theme]{color:#F3EAF2;
 --dsw-specific-sidebar-fill:rgba(10,14,32,0.88);
 background-color:#0A0E20;
 }
-body[data-ds-dark-theme] [id=root]{background:linear-gradient(rgba(10,14,32,0.55) 0%,rgba(14,18,40,0.42) 110px,rgba(18,23,50,0.36) 100%);border:1px solid rgba(127,168,200,0.14);box-shadow:0 8px 28px rgba(0,0,0,0.32),inset 0 1px rgba(255,255,255,0.06)}
+body[data-ds-dark-theme] #root{background:linear-gradient(rgba(10,14,32,0.55) 0%,rgba(14,18,40,0.42) 110px,rgba(18,23,50,0.36) 100%) !important;border:1px solid rgba(127,168,200,0.14);box-shadow:0 8px 28px rgba(0,0,0,0.32),inset 0 1px rgba(255,255,255,0.06)}
 
 /* === 热熔光柱 — dark mode bottom warm pillar === */
 body[data-ds-dark-theme]::before{content:'';position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:42vw;max-width:520px;height:100vh;background:radial-gradient(ellipse 100% 80% at 50% 100%,rgba(255,140,66,0.13) 0%,rgba(242,104,158,0.06) 32%,transparent 72%);pointer-events:none;z-index:0}
+
+/* === BACKGROUND ART LAYER — fixed div (reliable across Chromium versions) === */
+[data-aemeath-bg]{position:fixed;inset:0;z-index:-1;pointer-events:none;background-position:center;background-size:cover;background-repeat:no-repeat}
 
 /* === CHARACTER STAGE — fixed, tracks sidebar width === */
 /* === CHARACTER STAGE — fixed, tracks sidebar width === */
