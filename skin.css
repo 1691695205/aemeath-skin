@@ -178,7 +178,8 @@ body[data-ds-dark-theme] [data-aemeath-bubble-bg]{background:radial-gradient(cir
 /* === AEMEATH PALETTE PANEL — user customization === */
  [data-skin-chrome='palette-panel']{position:fixed;bottom:64px;right:12px;width:280px;max-height:70vh;overflow-y:auto;background:rgba(253,246,249,0.95);border:1px solid rgba(242,104,158,0.25);border-radius:12px;box-shadow:0 8px 32px rgba(74,53,96,0.15);z-index:10000;font-size:13px;color:#4A3560;-webkit-backdrop-filter:blur(8px);transition:transform 0.3s ease,opacity 0.3s ease}
 body[data-ds-dark-theme] [data-skin-chrome='palette-panel']{background:rgba(12,18,38,0.95);border-color:rgba(86,212,230,0.25);color:#F3DCE9;box-shadow:0 8px 32px rgba(0,0,0,0.32)}
- [data-skin-chrome='palette-panel'][data-palette-collapsed='true']{bottom:12px;transform:translateY(calc(100% - 40px))}
+ [data-skin-chrome='palette-panel'][data-palette-collapsed='true']{transform:translateY(calc(100% + 12px));visibility:hidden;pointer-events:none;transition:transform 0.3s ease,opacity 0.3s ease,visibility 0s linear 0.3s}
+ [data-skin-chrome='palette-panel'][data-palette-collapsed='false']{transform:none;visibility:visible;pointer-events:auto}
  [data-skin-chrome='palette-panel'] *{box-sizing:border-box}
  [data-skin-chrome='palette-panel'] .pp-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;font-weight:600;border-bottom:1px solid rgba(242,104,158,0.15)}
  [data-skin-chrome='palette-panel'] .pp-body{padding:8px 12px 12px}
