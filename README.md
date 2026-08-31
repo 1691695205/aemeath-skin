@@ -63,7 +63,7 @@ dsh plugin --profile <name> add https://github.com/1691695205/aemeath-skin
 ```
 ├── package.json          # dsh.bundle.patch → cordis.patch.yml；dsh.client.platform: web
 ├── cordis.patch.yml      # insert ui-skin-aemeath 到 web 插件名单
-├── lib/index.js          # 宿主端：/api/dsh-aemeath/settings (GET/PUT) + installSettingsSection 设置区
+├── lib/index.js          # 宿主端：/api/dsh-aemeath/settings (GET/PUT) + 设置区（alpha.2 ctx.settings.installSection 注册）
 ├── lib/client.js         # 浏览器端：内联素材 + skin.css + 装饰管线 + 开关轮询（构建产物）
 ├── scripts/build-client.mjs  # 从 client.template.mjs + assets + skin.css 生成 lib/client.js
 ├── lib/client.template.mjs   # client 源码模板（占位符由构建脚本填充）
@@ -99,10 +99,14 @@ dsh plugin --profile <name> add https://github.com/1691695205/aemeath-skin
 ## 兼容性
 
 - DSH Web：`0.1.0-rc.6 ~ 0.1.1-rc.2`（`dsh.client.version` 声明区间）
-- 依赖：`schemastery`（dependencies）、`@deepseek-ai/dsh-settings`（peer，由 DSH 共享层提供）、`@deepseek-ai/cordis`（peer）
+- 依赖：`schemastery`（dependencies）、`@deepseek-ai/dsh-settings`（peer，设置模块经 `ctx.inject(["settings"])` 注入，不直接 import）、`@deepseek-ai/cordis`（peer）
 - 不依赖皮肤中心
 
 ## 更新记录
+
+### v1.0.1 — 2026-08-31
+
+- 设置区迁移至 DSH alpha.2 设置 API：`ctx.inject(["settings"])` → `ctx.settings.installSection(...)`，移除 `installSettingsSection` / `settingsNamespace` 直接导入
 
 ### v1.0.0 — 2026-08-25
 
