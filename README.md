@@ -98,11 +98,18 @@ dsh plugin --profile <name> add https://github.com/1691695205/aemeath-skin
 
 ## 兼容性
 
-- DSH Web：`0.1.0-rc.6 ~ 0.1.1-rc.2`（`dsh.client.version` 声明区间）
+- DSH Web：`0.1.0-rc.6 ~ 0.1.2-alpha.*`（`dsh.client.version` 声明区间）
+- **DSH Desktop 2.0.4+（上游 `0.1.2-alpha.x`）**：桌面壳 advanced/extended 模式用 `.dshDesktopConversationSurface` 等不透明面板包住应用，本皮肤 v1.0.2 起强制 `--dsw-alias-bg-base: transparent !important` 并将这些面板置透明，恢复宫殿背景透出
 - 依赖：`schemastery`（dependencies）、`@deepseek-ai/dsh-settings`（peer，设置模块经 `ctx.inject(["settings"])` 注入，不直接 import）、`@deepseek-ai/cordis`（peer）
 - 不依赖皮肤中心
 
 ## 更新记录
+
+### v1.0.2 — 2026-09-03
+
+- **修复 DSH Desktop 2.0.4（上游 `0.1.2-alpha.*`）下宫殿背景消失**：2.0.4 桌面壳（extended/advanced 玻璃材质模式）把应用包进 `.dshDesktopConversationSurface` / `.dshDesktopDetailsSurface` / `.dshDesktopWindowsCaptionRow`，各面板 `background: var(--dsw-alias-bg-base)`；主题 CSS 在 `body` 上直接声明该 token 为不透明值，压过皮肤在 `:root` 的 `transparent` 覆盖 → 面板不透明盖住 `[data-aemeath-bg]` 固定背景层
+- 修法（skin.css ⑯ 段）：`body { --dsw-alias-bg-base: transparent !important }` 强制 token 全应用透明（恢复设计意图的半透明底，所有 token 消费容器一并透明）+ 显式把桌面壳四个 surface 面板置 `transparent !important`（防后续壳版本硬编码不透明色）
+- 重建 `lib/client.js`（12 资产内联，13.4 MiB）
 
 ### v1.0.1 — 2026-08-31
 

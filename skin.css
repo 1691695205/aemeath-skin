@@ -239,3 +239,25 @@ body[data-aemeath-msg-frame='on'] [data-aemeath-msg]{box-shadow:inset 0 0 0 1px 
 body[data-ds-dark-theme][data-aemeath-msg-frame='on'] [data-aemeath-msg]{box-shadow:inset 0 0 0 1px rgba(86,212,230,0.22),0 0 12px rgba(242,104,158,0.08);border-radius:12px;background-color:rgba(12,18,38,var(--aemeath-msg-opacity,0.85))}
 body[data-aemeath-msg-frame='on'] [data-aemeath-msg] *{position:relative;z-index:1}
 body[data-aemeath-msg-frame='on'] [data-aemeath-msg]{transition:none!important}
+
+/* === ⑯ DESKTOP FRAME SURFACES — DSH Desktop 2.0.4+ (extended/advanced shell) ===
+   The 2.0.4 desktop shell wraps the app in .dshDesktopConversationSurface /
+   .dshDesktopDetailsSurface / .dshDesktopWindowsCaptionRow, each painted with
+   background: var(--dsw-alias-bg-base). The theme's design CSS declares
+   --dsw-alias-bg-base on body directly (opaque in light mode), which beats the
+   inherited :root override this skin sets — so those panels paint opaque and
+   hide the fixed [data-aemeath-bg] art layer. Two-pronged fix:
+   1) enforce the token transparent on body (!important beats the theme's
+      non-important body declaration, restoring the intended translucent base
+      app-wide — every var(--dsw-alias-bg-base) consumer resolves transparent);
+   2) peel the concrete desktop frame surfaces as a belt-and-suspenders, in case
+      any shell revision hardcodes an opaque fill not routed through the token. */
+body {
+  --dsw-alias-bg-base: transparent !important;
+}
+body[data-dsh-desktop-mode] .dshDesktopConversationSurface,
+body[data-dsh-desktop-mode] .dshDesktopDetailsSurface,
+body[data-dsh-desktop-mode] .dshDesktopWindowsCaptionRow,
+body[data-dsh-desktop-mode] .dshDesktopMacCaptionRow {
+  background: transparent !important;
+}
