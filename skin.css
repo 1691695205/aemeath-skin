@@ -145,6 +145,10 @@ body[data-ds-dark-theme][data-aemeath-session-phase='hero'][data-aemeath-sidebar
  [data-aemeath-composer-motion='dock'] [data-aemeath-sidebar-footer]:before{opacity:0.8;transition:opacity 0.5s}
  [data-aemeath-composer-motion='rise'] [data-aemeath-sidebar-footer]:before{opacity:0.4;transition:opacity 0.5s}
 
+/* === SHELL FIX: skin chrome span injected before #root must never enter document flow (was pushing the app down a full viewport in the dsh desktop shell) === */
+body>span[data-skin-chrome]{display:block!important;position:fixed!important;top:0!important;left:0!important;width:100%!important;height:100%!important;margin:0!important;padding:0!important;pointer-events:none!important}
+body>span[data-skin-chrome='titlebar-brand']{width:auto!important;height:36px!important;left:14px!important}
+
 /* === SCROLLBAR === */
  ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--aemeath-pink),var(--aemeath-cyan));border-radius:4px;opacity:0.5}
  ::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,var(--aemeath-pink),var(--aemeath-flame));opacity:0.7}
