@@ -244,20 +244,42 @@ body[data-ds-dark-theme][data-aemeath-msg-frame='on'] [data-aemeath-msg]{box-sha
 body[data-aemeath-msg-frame='on'] [data-aemeath-msg] *{position:relative;z-index:1}
 body[data-aemeath-msg-frame='on'] [data-aemeath-msg]{transition:none!important}
 
-/* === ⑯ DESKTOP FRAME SURFACES — DSH Desktop 2.0.4+ (extended/advanced shell) ===
-   The 2.0.4 desktop shell wraps the app in .dshDesktopConversationSurface /
-   .dshDesktopDetailsSurface / .dshDesktopWindowsCaptionRow, each painted with
-   background: var(--dsw-alias-bg-base). The theme's design CSS declares
-   --dsw-alias-bg-base on body directly (opaque in light mode), which beats the
-   inherited :root override this skin sets — so those panels paint opaque and
-   hide the fixed [data-aemeath-bg] art layer. Two-pronged fix:
-   1) enforce the token transparent on body (!important beats the theme's
-      non-important body declaration, restoring the intended translucent base
-      app-wide — every var(--dsw-alias-bg-base) consumer resolves transparent);
-   2) peel the concrete desktop frame surfaces as a belt-and-suspenders, in case
-      any shell revision hardcodes an opaque fill not routed through the token. */
+/* === ⑯ DESKTOP FRAME SURFACES — DSH Desktop 窗口壳 ===
+   壳换过两代，两代都要按住，因为壳会在整窗上刷一层不透明底色，把固定在
+   z-index:-1 的 [data-aemeath-bg] 立绘层整个盖住。
+
+   A) 旧壳（.dshDesktopConversationSurface / .dshDesktopDetailsSurface /
+      .dshDesktopWindowsCaptionRow / .dshDesktopMacCaptionRow，挂在
+      body[data-dsh-desktop-mode] 下）用 background:var(--dsw-alias-bg-base)
+      上色，而主题把 --dsw-alias-bg-base 声明在 body 上（深色为近黑），
+      body 上的声明胜过本皮肤写在 :root 的继承值 —— 所以必须在 body 层用
+      !important 把它按成 transparent，全应用每个 var(--dsw-alias-bg-base)
+      消费者就都透明了。
+
+   B) 新壳（0.2.0-rc.2，AppFrame 网格，CSS-module 哈希名 .BynINW_frame /
+      _sidebarCol / _centerCol / _rightbarCol）多了一条更凶的规则：
+        [data-windows-titlebar] .BynINW_frame{background:var(--dsw-specific-sidebar-fill)}
+      它的优先级高于基础 .BynINW_frame{background:var(--dsw-alias-bg-base)}，
+      于是整窗改用「侧栏填充色」上色。而本皮肤为了左栏可读性故意把这个
+      token 留在 88% 不透明（深色 rgba(10,14,32,.88)）—— 结果整窗压了一层
+      88% 的深蓝纱，立绘只剩 12% 透出来，看起来就是「背景不透明了」。
+      这里只剥掉 frame 自身（含 Windows 标题栏拖拽条 :before），保留
+      _sidebarCol 自己的左栏底色，不做连带。
+      选择器不写死哈希：用 :has() 认「直接子元素里有 sidebarCol/centerCol
+      的那个 *_frame」，跟本文件量侧栏宽度用的是同一套 [class*='...'] 约定，
+      上位壳改哈希也仍然命中。 */
 body {
   --dsw-alias-bg-base: transparent !important;
+}
+html[data-windows-titlebar] .BynINW_frame,
+html[data-windows-titlebar] div[class*='_frame']:has(> [class*='sidebarCol']),
+html[data-windows-titlebar] div[class*='_frame']:has(> [class*='centerCol']) {
+  background: transparent !important;
+}
+html[data-windows-titlebar] .BynINW_frame::before,
+html[data-windows-titlebar] div[class*='_frame']:has(> [class*='sidebarCol'])::before,
+html[data-windows-titlebar] div[class*='_frame']:has(> [class*='centerCol'])::before {
+  background: transparent !important;
 }
 body[data-dsh-desktop-mode] .dshDesktopConversationSurface,
 body[data-dsh-desktop-mode] .dshDesktopDetailsSurface,

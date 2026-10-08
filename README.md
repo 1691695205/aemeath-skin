@@ -101,10 +101,18 @@ dsh plugin --profile <name> add https://github.com/1691695205/aemeath-skin
 - **DSH 0.2.x（含 Desktop 3.x 壳）**：设置页由 `Config` 导出自动生成，`ctx.settings.configure({ auto: false })` 声明不自动弹出
 - DSH 0.1.x：同一份 peer 区间仍成立（`@deepseek-ai/dsh-settings` 声明 `>=0.1.1-rc.2 <0.3.0-0`），设置区沿用旧路径
 - **DSH Desktop 2.0.4+（上游 `0.1.2-alpha.x`）**：桌面壳 advanced/extended 模式用 `.dshDesktopConversationSurface` 等不透明面板包住应用，本皮肤 v1.0.2 起强制 `--dsw-alias-bg-base: transparent !important` 并将这些面板置透明，恢复宫殿背景透出
+- **DSH Desktop 0.2.0-rc.2（新 AppFrame 网格壳）**：该壳给整窗根节点加了 `[data-windows-titlebar] .BynINW_frame{background:var(--dsw-specific-sidebar-fill)}`，优先级高于基础 `.BynINW_frame{background:var(--dsw-alias-bg-base)}`，于是整窗改用「侧栏填充色」上色；本皮肤将该 token 保持在 88% 不透明（左栏可读性），结果整窗压上一层 88% 深蓝纱。v1.1.1 起在 ⑯ 段额外剥掉 frame 自身与其 `::before` 拖拽条（保留左栏自身底色），选择器用 `:has()` 认 `[class*='sidebarCol']` / `[class*='centerCol']` 而不写死哈希
 - 依赖：`@deepseek-ai/schemastery`（peer，动态导入取宿主副本）、`@deepseek-ai/dsh-settings`（peer，经 `ctx.inject(["settings"])` 注入）、`@deepseek-ai/cordis`（peer）。**三者都必须留在 `peerDependencies`**：链接形态的插件只有声明了 peer，宿主解析器才会把安装作用域内的副本路由给它
 - 不依赖皮肤中心
 
 ## 更新记录
+
+### v1.1.1 — 2026-10-08
+
+- **修复 DSH Desktop 0.2.0-rc.2 新壳下「背景不透明了」**：新 AppFrame 网格壳（CSS-module 哈希名 `.BynINW_frame` / `_sidebarCol` / `_centerCol` / `_rightbarCol`）新增一条整窗上色规则 `[data-windows-titlebar] .BynINW_frame{background:var(--dsw-specific-sidebar-fill)}`，优先级压过基础 `.BynINW_frame{background:var(--dsw-alias-bg-base)}`。旧壳那四个 `.dshDesktop*` 面板类名在新壳里已完全不存在（全 asar 零命中），所以 v1.0.2 的 ⑯ 段对新壳完全失效，只剩 `body{--dsw-alias-bg-base:transparent}` 还在生效——而新壳绕过了这个 token，改用侧栏填充色，于是整窗被 88% 深蓝盖住，立绘只剩 12% 透出
+- 像素级验证：按 `bgOpacity=67` 的 scrim + `#root` 渐变 + frame `rgba(10,14,32,0.88)` 正向合成底图，与实拍截图逐区域比对 RMSE **1.44/255**（不叠 frame 的两组假设分别为 32.8 与 52.9），确认就是这一层
+- 修法（skin.css ⑯ 段 B 小节）：`html[data-windows-titlebar]` 下把 frame 自身与其 `::before` 标题栏拖拽条置 `transparent !important`，只剥整窗底、保留 `.BynINW_*_sidebarCol` 自己 88% 的左栏底色（左栏可读性不变）；选择器不写死哈希，用 `:has(> [class*='sidebarCol'])` / `:has(> [class*='centerCol'])` 锚定，与本文件量侧栏宽度用的是同一套 `[class*='...']` 约定，上位壳再改哈希仍能命中；旧壳那组规则原样保留，两代壳同时兼容
+- 重建 `lib/client.js`（12 资产内联，13.42 MiB）；改前产物存为 `lib/client.js.bak-shellframe-20261008`
 
 ### v1.1.0 — 2026-09-30
 
