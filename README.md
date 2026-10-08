@@ -107,6 +107,13 @@ dsh plugin --profile <name> add https://github.com/1691695205/aemeath-skin
 
 ## 更新记录
 
+### v1.1.2 — 2026-10-08
+
+- **修复「任务前面的转动圆圈太大」**：skin.css ② 段有一条 v2 时期留下的通配 `[class*='spinner']{width:40px;height:40px;border:3px solid transparent;…}`。当时壳里只有一个 spinner，通配无害；DSH 0.2.x 壳里现在有七处尺寸各异的 spinner（附件卡 20px、文件卡 20px、账号 24px、设置页按钮、启动页 40px……），其中会话行那颗「进行中」是 `@deepseek-ai/dsh-client-ui-primitives` 的 `StateDot` —— 一个 `<svg width="14" height="14" viewBox="0 0 24 24">`。**CSS 的 width/height 压得过 SVG 的 width/height 属性**，14px 被撑成 40px（实测外径 47px = 40 + 两侧 3px 边框），加上光晕就糊到标题上
+- 皮肤从不自建 spinner 元素（模板与产物全文零 `spinner` 引用），这条规则没有服务对象，纯属改造宿主。改为只染色：`svg[class*='spinner'][data-state='ongoing']{color:var(--aemeath-cyan)}`。宽高、边框、自转一律交还壳 —— 壳自带 `dsh-state-dot-spin`，且会在 `syncSpinner` 里把 `getAnimations({subtree:true})` 的 `startTime` 全部归零对齐，皮肤再叠一层 `animation` 只会让它转成两倍速。`data-state='ongoing'` 只落在会话行那颗上，其余 spinner 不受影响
+- **修复「改完还是老样子」：热重载残留**。profile 是 `patchReload: "live"`，插件产物一改就热重载；但 `apply()` 原先无条件 `doc.head.append(styleEl)` 且**从不检查旧表**，模板末尾自己也注明运行时没有 dispose 钩子、回收只靠「开关关掉」或「页面卸载」。于是热重载把新表叠上去、旧表连同它那条 40px 通配继续留在 head 里生效，高优先级的旧规则压过新规则 —— 改什么看着都没变。修法：进场先 `querySelectorAll("style[data-aemeath-skin-style]").forEach(el => el.remove())` 清场，再扫掉上一实例遗留的装饰节点（`[data-skin-chrome]` / `[data-aemeath-bg]` / `[data-aemeath-character]` / `[data-aemeath-bubble]`），并用 `globalThis.__aemeathSkinGeneration` 代际戳让被顶替的旧实例（连同它那些还会跑满整页生命周期的 `setInterval`）自行 `standDown()`
+- 重建 `lib/client.js`（12 资产内联，13.42 MiB）；改前产物存为 `lib/client.js.bak-hotreload-20261008`（spinner 收窄但无清场逻辑的那版存为 `lib/client.js.bak-spinner-20261008`）
+
 ### v1.1.1 — 2026-10-08
 
 - **修复 DSH Desktop 0.2.0-rc.2 新壳下「背景不透明了」**：新 AppFrame 网格壳（CSS-module 哈希名 `.BynINW_frame` / `_sidebarCol` / `_centerCol` / `_rightbarCol`）新增一条整窗上色规则 `[data-windows-titlebar] .BynINW_frame{background:var(--dsw-specific-sidebar-fill)}`，优先级压过基础 `.BynINW_frame{background:var(--dsw-alias-bg-base)}`。旧壳那四个 `.dshDesktop*` 面板类名在新壳里已完全不存在（全 asar 零命中），所以 v1.0.2 的 ⑯ 段对新壳完全失效，只剩 `body{--dsw-alias-bg-base:transparent}` 还在生效——而新壳绕过了这个 token，改用侧栏填充色，于是整窗被 88% 深蓝盖住，立绘只剩 12% 透出

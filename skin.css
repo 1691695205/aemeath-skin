@@ -174,10 +174,20 @@ body[data-ds-dark-theme] [data-aemeath-bubble-bg]{background:radial-gradient(cir
  [class*='floating'][class*='button']{background-image:linear-gradient(135deg,var(--aemeath-pink),var(--aemeath-flame))}
  [class*='segment'][aria-selected='true'], [class*='tab'][aria-selected='true']{background-image:linear-gradient(135deg,rgba(242,104,158,0.15),rgba(55,182,201,0.15))}
 
-/* === ② SPINNER — dual-ring tacet spin with ghost core === */
-@keyframes aemeath-tacet-spin{to{transform:rotate(360deg)}}
- [class*='spinner']{position:relative;width:40px;height:40px;border-radius:50%;border:3px solid transparent;border-top-color:var(--aemeath-cyan);border-bottom-color:var(--aemeath-pink);box-shadow:0 0 15px rgba(55,182,201,0.5);animation:aemeath-tacet-spin 1s linear infinite}
- [class*='spinner']::after{content:'';position:absolute;inset:6px;border-radius:50%;border:2px solid transparent;border-left-color:var(--aemeath-flame);border-right-color:var(--aemeath-gold);box-shadow:inset 0 0 8px rgba(8,14,30,0.8)}
+/* === ② SPINNER — 只染色，尺寸交还宿主 ===
+   这里原先是 [class*='spinner']{width:40px;height:40px;border:3px ...} 一条通配，
+   在壳里只有一个 spinner 的年代还说得过去；现在壳里有七处、尺寸各不相同
+   （附件卡 20px、文件卡 20px、账号 24px、设置页按钮、启动页 40px …），
+   会话行那颗「进行中」是 primitives 的 StateDot —— 一个 <svg width=14 height=14>，
+   而 CSS 的 width/height 压得过 svg 属性，于是 14px 被硬撑到 40px，
+   圆环连着边框与光晕糊到标题上。
+
+   本皮肤并不自建 spinner 元素，所以这里也不该管尺寸：只把壳用 currentColor
+   画的描边染成星炬配色，宽高 / 边框 / 自转全部留给壳自己（它已有
+   dsh-state-dot-spin，且会把所有动画 startTime 归零对齐，皮肤再叠一层
+   animation 只会让它转成两倍速）。data-state='ongoing' 只落在会话行那颗上，
+   其余 spinner 一律不动。 */
+ svg[class*='spinner'][data-state='ongoing']{color:var(--aemeath-cyan)}
 
 /* === AEMEATH PALETTE PANEL — user customization === */
  [data-skin-chrome='palette-panel']{position:fixed;bottom:64px;right:12px;width:280px;max-height:70vh;overflow-y:auto;background:rgba(253,246,249,0.95);border:1px solid rgba(242,104,158,0.25);border-radius:12px;box-shadow:0 8px 32px rgba(74,53,96,0.15);z-index:10000;font-size:13px;color:#4A3560;-webkit-backdrop-filter:blur(8px);transition:transform 0.3s ease,opacity 0.3s ease}
