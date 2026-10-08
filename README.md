@@ -34,7 +34,7 @@ dsh plugin --profile <name> add https://github.com/1691695205/aemeath-skin
 
 ### 界面开关与设置区
 
-皮肤设置挂在 **DSH 设置界面 → 插件 → `ui-skin-aemeath`**，全部控件即时生效、持久化到 profile 文件：
+皮肤设置挂在 **DSH 设置界面 → 插件 → `ui-skin-aemeath`**，控件由宿主按插件的 `Config` 自动生成，全部即时生效：
 
 | 控件 | 类型 | 范围/选项 | 默认 |
 |---|---|---|---|
@@ -54,7 +54,7 @@ dsh plugin --profile <name> add https://github.com/1691695205/aemeath-skin
 | contentWidth | 滑块 | 对话宽度 400–1200px | 600px |
 | bgOpacity | 滑块 | 背景透明度 20–100% | 100% |
 
-- **持久化**：`profiles/<name>/data/dsh-client-ui-skin-aemeath/settings.json`，刷新、重启、清浏览器存储都不丢
+- **持久化**：`profiles/<name>/cordis.patch.yml` 的 `ui-skin-aemeath` 行配置（DSH 0.2.x 起由 settings 服务托管，写入 profile 的 settings 文档）
 - **总开关关闭** = 完整卸载：移除装饰 DOM、恢复 body 背景样式、移除注入的 CSS，回到 DSH 默认界面；设置区里再打开立即恢复
 - **调色板面板**：右下角 🎨 浮动面板与设置区控件同一数据源，任意一处改动两边同步
 
@@ -63,7 +63,7 @@ dsh plugin --profile <name> add https://github.com/1691695205/aemeath-skin
 ```
 ├── package.json          # dsh.bundle.patch → cordis.patch.yml；dsh.client.platform: web
 ├── cordis.patch.yml      # insert ui-skin-aemeath 到 web 插件名单
-├── lib/index.js          # 宿主端：/api/dsh-aemeath/settings (GET/PUT) + 设置区（alpha.2 ctx.settings.installSection 注册）
+├── lib/index.js          # 宿主端：/api/dsh-aemeath/settings (GET/PUT) + Config 导出（0.2.x 设置页由此自动生成）
 ├── lib/client.js         # 浏览器端：内联素材 + skin.css + 装饰管线 + 开关轮询（构建产物）
 ├── scripts/build-client.mjs  # 从 client.template.mjs + assets + skin.css 生成 lib/client.js
 ├── lib/client.template.mjs   # client 源码模板（占位符由构建脚本填充）
@@ -98,12 +98,22 @@ dsh plugin --profile <name> add https://github.com/1691695205/aemeath-skin
 
 ## 兼容性
 
-- DSH Web：`0.1.0-rc.6 ~ 0.1.2-alpha.*`（`dsh.client.version` 声明区间）
+- **DSH 0.2.x（含 Desktop 3.x 壳）**：设置页由 `Config` 导出自动生成，`ctx.settings.configure({ auto: false })` 声明不自动弹出
+- DSH 0.1.x：同一份 peer 区间仍成立（`@deepseek-ai/dsh-settings` 声明 `>=0.1.1-rc.2 <0.3.0-0`），设置区沿用旧路径
 - **DSH Desktop 2.0.4+（上游 `0.1.2-alpha.x`）**：桌面壳 advanced/extended 模式用 `.dshDesktopConversationSurface` 等不透明面板包住应用，本皮肤 v1.0.2 起强制 `--dsw-alias-bg-base: transparent !important` 并将这些面板置透明，恢复宫殿背景透出
-- 依赖：`schemastery`（dependencies）、`@deepseek-ai/dsh-settings`（peer，设置模块经 `ctx.inject(["settings"])` 注入，不直接 import）、`@deepseek-ai/cordis`（peer）
+- 依赖：`@deepseek-ai/schemastery`（peer，动态导入取宿主副本）、`@deepseek-ai/dsh-settings`（peer，经 `ctx.inject(["settings"])` 注入）、`@deepseek-ai/cordis`（peer）。**三者都必须留在 `peerDependencies`**：链接形态的插件只有声明了 peer，宿主解析器才会把安装作用域内的副本路由给它
 - 不依赖皮肤中心
 
 ## 更新记录
+
+### v1.1.0 — 2026-09-30
+
+- **修复 DSH 0.2.0-rc.2 下插件整个不加载**：0.2.x 的 bundle 预检（`evaluatePluginCompatibility`）逐条检查 `@deepseek-ai/dsh` / `@deepseek-ai/dsh-*` 的 peer 区间，`@deepseek-ai/dsh-settings: ^0.1.1-rc.2` 不满足 0.2.x，皮肤（连同 denia 同款）在装载前即被跳过
+- 修法：peer 区间放宽为 `>=0.1.1-rc.2 <0.3.0-0`（0.1.x 与 0.2.x 两线同时成立），并新增 `@deepseek-ai/schemastery` peer —— 链接插件只有声明 peer，宿主才会把安装作用域内的副本路由给它
+- **修复设置区**：`ctx.settings.installSection(...)` 在任何已发布版本里都不存在，即使绕过预检也会在挂载时抛错。改为导出 `Config`（16 个字段全部 `.volatile()`），0.2.x 设置页据此自动生成；配合 `ctx.settings.configure({ auto: false }, ctx.fiber)` 声明不自动弹出，读写经 `ctx.settings.describe/update` 走 profile 行配置
+- 移除 `schemastery` 直接依赖（本地副本 3.18.0 无 `volatile()`），改为受保护的动态 `import("@deepseek-ai/schemastery")`：取不到时降级为「无设置页」，不影响皮肤本体与 🎨 面板
+- **旧设置自动迁移**：首次挂载时把 `data/dsh-client-ui-skin-aemeath/settings.json` 并入行配置（仅当行内还没有用户覆盖时），随后重命名为 `settings.json.imported`
+- 前端与 `/api/dsh-aemeath/settings`（GET/PUT）契约不变，`lib/client.js` 无需重建
 
 ### v1.0.2 — 2026-09-03
 
