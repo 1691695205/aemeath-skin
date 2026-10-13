@@ -109,27 +109,42 @@ dsh plugin --profile <name> add https://github.com/1691695205/aemeath-skin
 
 ### v1.1.2 — 2026-10-08
 
-修复会话行「进行中」圆圈被旧通配规则撑大，并让热重载先清场旧样式表与残留节点，解决「改完还是老样子」。
+- 修复会话行「进行中」圆圈被撑大：skin.css ② 段的 v2 时期通配 `[class*='spinner']{width:40px;height:40px;…}` 压过 `StateDot` 的 `<svg width="14">`，实测外径 47px；改为只染色 `svg[class*='spinner'][data-state='ongoing']`，宽高与自转交还壳（壳自带 `dsh-state-dot-spin`，再叠 `animation` 只会转成两倍速）
+- **修复「改完还是老样子」：热重载残留**：profile 是 `patchReload: "live"`，而 `apply()` 原先无条件 append 且从不检查旧表，热重载后旧表连同 40px 通配继续生效；改为进场先 `querySelectorAll("style[data-aemeath-skin-style]")` 清场并扫掉遗留装饰节点，再用 `globalThis.__aemeathSkinGeneration` 代际戳让旧实例 `standDown()`
+- 重建 `lib/client.js`（12 资产内联，13.42 MiB）；改前产物存为 `lib/client.js.bak-hotreload-20261008`
 
 ### v1.1.1 — 2026-10-08
 
-修复 DSH Desktop 0.2.0-rc.2 新壳下整窗被 88% 深蓝盖住、立绘只剩 12% 透出。
+- **修复 DSH Desktop 0.2.0-rc.2 新壳下「背景不透明了」**：新 AppFrame 网格壳的 `[data-windows-titlebar] .BynINW_frame{background:var(--dsw-specific-sidebar-fill)}` 压过基础规则，整窗被 88% 深蓝盖住、立绘只剩 12% 透出（像素级比对 RMSE 1.44/255）；旧壳的 `.dshDesktop*` 类名在新壳已不存在
+- 修法（skin.css ⑯ 段 B 小节）：`html[data-windows-titlebar]` 下把 frame 自身与其 `::before` 拖拽条置 `transparent !important`，保留左栏自身底色；选择器用 `:has(> [class*='sidebarCol'])` 锚定而不写死哈希，旧壳规则原样保留
+- 重建 `lib/client.js`（12 资产内联，13.42 MiB）；改前产物存为 `lib/client.js.bak-shellframe-20261008`
 
 ### v1.1.0 — 2026-09-30
 
-修复 0.2.x 下插件整个不加载（peer 区间不满足 bundle 预检），并把失效的设置区改为导出 `Config` 由设置页自动生成。
+- **修复 DSH 0.2.0-rc.2 下插件整个不加载**：0.2.x 的 bundle 预检（`evaluatePluginCompatibility`）逐条校验 peer 区间，`@deepseek-ai/dsh-settings: ^0.1.1-rc.2` 不满足 0.2.x，皮肤在装载前即被跳过；放宽为 `>=0.1.1-rc.2 <0.3.0-0`，并新增 `@deepseek-ai/schemastery` peer
+- **修复设置区**：`ctx.settings.installSection(...)` 在任何已发布版本里都不存在，改为导出 `Config`（16 个字段全部 `.volatile()`）由 0.2.x 设置页自动生成，配合 `configure({ auto: false })` 不自动弹出
+- **旧设置自动迁移**：首次挂载时把 `data/dsh-client-ui-skin-aemeath/settings.json` 并入行配置，随后重命名为 `settings.json.imported`
+- 前端与 `/api/dsh-aemeath/settings`（GET/PUT）契约不变，`lib/client.js` 无需重建
 
 ### v1.0.2 — 2026-09-03
 
-修复 DSH Desktop 2.0.4 玻璃材质壳下宫殿背景被不透明面板盖住。
+- **修复 DSH Desktop 2.0.4（上游 `0.1.2-alpha.*`）下宫殿背景消失**：2.0.4 玻璃材质壳把应用包进 `.dshDesktopConversationSurface` 等面板，各面板声明 `--dsw-alias-bg-base` 为不透明值，压过皮肤的 `transparent` 覆盖 → 盖住 `[data-aemeath-bg]` 固定背景层
+- 修法（skin.css ⑯ 段）：`body { --dsw-alias-bg-base: transparent !important }` 强制 token 全应用透明 + 显式把桌面壳四个 surface 面板置 `transparent !important`
+- 重建 `lib/client.js`（12 资产内联，13.4 MiB）
 
 ### v1.0.1 — 2026-08-31
 
-设置区迁移至 DSH alpha.2 的 `ctx.settings` API。
+- 设置区迁移至 DSH alpha.2 设置 API：`ctx.inject(["settings"])` → `ctx.settings.installSection(...)`，移除 `installSettingsSection` / `settingsNamespace` 直接导入
 
 ### v1.0.0 — 2026-08-25
 
-首次以独立插件形态（cordis bundle）发布，含设置开关、profile 持久化与 🎨 调色板。
+- 独立插件形态（cordis bundle）：`package.json`、`cordis.patch.yml`、`lib/index.js`、`lib/client.js`、`scripts/build-client.mjs`
+- **DSH 设置区开关**：`ui-skin-aemeath` 设置区（`enabled` 总开关 + 15 项调色板控件），关=皮肤完整卸载回默认界面
+- **profile 持久化**：设置存 `profiles/<name>/data/dsh-client-ui-skin-aemeath/settings.json`
+- 宿主端设置 API：`GET/PUT /api/dsh-aemeath/settings`（loopback 鉴权、字段校验、原子写）
+- 浮动 🎨 调色板面板（与设置区同一数据源）
+- client bundle 按 DSH `__ModuleLoader__.load({ id, factory })` 契约注册；不依赖 `dsh.client.inject` 注入链，主题检测自实现（`body[data-ds-dark-theme]` + MutationObserver）
+- 移除皮肤中心 v2 形态（`skin.json` / `hooks.mjs` / `preview/`）
 
 ## 参考项目
 
